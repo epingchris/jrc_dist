@@ -8,7 +8,7 @@ cat("check_freq is: ", check_freq, "\n")
 inpath = as.character(args[3])
 cat("inpath is: ", inpath, "\n")
 
-aa = 11
+aa = 12
 
 infile = list.files(path = inpath, pattern = ".tif$", all.files = T, full.names = T)
 rast_list = terra::rast(infile)
