@@ -1,5 +1,5 @@
 #!/bin/bash
 
-Rscript jrc_dist.r 31 F /maps/epr26/JRC_TMF_60W_10N
-
-#dsfsd
+Rscript jrc_dist.r $1 $3
+#$1 is check_freq
+#$2 is year
