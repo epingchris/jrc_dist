@@ -13,9 +13,13 @@ inpath1 = paste0("/maps/epr26/JRC_TMF_60W_10N/JRC_TMF_AnnualChange_v2_", year1, 
 
 rast_jrc0 = terra::rast(inpath0)
 rast_jrc1 = terra::rast(inpath1)
+gf_contour = terra::vect("./Disturbance/gadm41_GUF_0.shp")
+
+rast_jrc0_gf = terra::crop(rast_jrc0, gf_contour)
+rast_jrc1_gf = terra::crop(rast_jrc1, gf_contour)
 
 #create transition raster
-rast_trans = rast_jrc0 * 10 + rast_jrc1
+rast_trans = rast_jrc0_gf * 10 + rast_jrc1_gf
 #12, 42: new degradation
 #13, 15, 23, 25, 26, 43, 45: new deforestation
 #14, 24, 34, 51, 52, 54, 64: regrowth
