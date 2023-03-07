@@ -1,5 +1,8 @@
+#receive year argument from shell script to calculate transition between a pair of annual JRC-TMF maps
+
 library(terra)
 
+#get arguments
 args = commandArgs(TRUE)
 check_freq = as.logical(args[1])
 cat("\ncheck_freq is: ", check_freq)
@@ -8,13 +11,15 @@ year0 = as.character(as.numeric(year1) - 1)
 cat("\nyear1 is: ", year1)
 cat("\nyear0 is: ", year0)
 
+#read raster
 inpath0 = paste0("/maps/epr26/JRC_TMF_60W_10N/JRC_TMF_AnnualChange_v2_", year0, "_SAM_ID49_N10_W60.tif")
 inpath1 = paste0("/maps/epr26/JRC_TMF_60W_10N/JRC_TMF_AnnualChange_v2_", year1, "_SAM_ID49_N10_W60.tif")
 
 rast_jrc0 = terra::rast(inpath0)
 rast_jrc1 = terra::rast(inpath1)
-gf_contour = terra::vect("./Disturbance/gadm41_GUF_0.shp")
 
+#crop to extent of French Guiana
+gf_contour = terra::vect("gadm41_GUF_0.shp")
 rast_jrc0_gf = terra::crop(rast_jrc0, gf_contour)
 rast_jrc1_gf = terra::crop(rast_jrc1, gf_contour)
 
@@ -32,23 +37,25 @@ if (check_freq) {
   print(as.vector(freqtab[freqtab$value == 32, ])[[3]])
 }
 
+#create raster identifying new disturbance pixels
 dist_class = c(12, 42, 13, 15, 23, 25, 26, 43, 45) # nolint: assignment_linter.
 rast_dist = terra::app(rast_trans, fun = function(x) ifelse(x %in% dist_class, 1, NA))
 
+#save output
 outpath_trans = paste0("/maps/epr26/jrc_dist/jrc_trans_", year1, ".tif")
 outpath_dist = paste0("/maps/epr26/jrc_dist/jrc_dist_", year1, ".tif")
 terra::writeRaster(rast_trans, filename = outpath_trans, overwrite = T)
 terra::writeRaster(rast_dist, filename = outpath_dist, overwrite = T)
 
-#check results ----
-a_trans = terra::rast("/maps/epr26/jrc_dist/jrc_trans_2003.tif")
-a_dist = terra::rast("/maps/epr26/jrc_dist/jrc_dist_2003.tif")
-b_trans = terra::rast("/maps/epr26/jrc_dist/jrc_trans_1993.tif")
-b_dist = terra::rast("/maps/epr26/jrc_dist/jrc_dist_1993.tif")
-(dffreq_a = as.data.frame(terra::freq(a_trans)))
-(dffreq_b = as.data.frame(terra::freq(b_trans)))
-dist_class = c(12, 42, 13, 15, 23, 25, 26, 43, 45) # nolint: assignment_linter.
-(sum(dffreq_a[dffreq_a$value %in% dist_class, ]$count))
-(sum(dffreq_b[dffreq_b$value %in% dist_class, ]$count))
-terra::freq(a_dist)
-terra::freq(b_dist)
+#check results
+#a_trans = terra::rast("/maps/epr26/jrc_dist/jrc_trans_2003.tif")
+#a_dist = terra::rast("/maps/epr26/jrc_dist/jrc_dist_2003.tif")
+#b_trans = terra::rast("/maps/epr26/jrc_dist/jrc_trans_1993.tif")
+#b_dist = terra::rast("/maps/epr26/jrc_dist/jrc_dist_1993.tif")
+#(dffreq_a = as.data.frame(terra::freq(a_trans)))
+#(dffreq_b = as.data.frame(terra::freq(b_trans)))
+#dist_class = c(12, 42, 13, 15, 23, 25, 26, 43, 45) # nolint: assignment_linter.
+#(sum(dffreq_a[dffreq_a$value %in% dist_class, ]$count))
+#(sum(dffreq_b[dffreq_b$value %in% dist_class, ]$count))
+#terra::freq(a_dist)
+#terra::freq(b_dist)
