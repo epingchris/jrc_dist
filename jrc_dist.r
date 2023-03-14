@@ -37,14 +37,16 @@ terra::writeRaster(rast_trans, filename = outpath_trans, overwrite = T)
 terra::writeRaster(rast_dist, filename = outpath_dist, overwrite = T)
 
 #check results ----
-a_trans = terra::rast("/maps/epr26/jrc_dist/jrc_trans_2003.tif")
-a_dist = terra::rast("/maps/epr26/jrc_dist/jrc_dist_2003.tif")
-b_trans = terra::rast("/maps/epr26/jrc_dist/jrc_trans_1993.tif")
-b_dist = terra::rast("/maps/epr26/jrc_dist/jrc_dist_1993.tif")
-(dffreq_a = as.data.frame(terra::freq(a_trans)))
-(dffreq_b = as.data.frame(terra::freq(b_trans)))
-dist_class = c(12, 42, 13, 15, 23, 25, 26, 43, 45) # nolint: assignment_linter.
+#a_trans = terra::rast("/maps/epr26/jrc_dist/jrc_trans_2003.tif")
+#a_dist = terra::rast("/maps/epr26/jrc_dist/jrc_dist_2003.tif")
+#b_trans = terra::rast("/maps/epr26/jrc_dist/jrc_trans_1993.tif")
+#b_dist = terra::rast("/maps/epr26/jrc_dist/jrc_dist_1993.tif")
+#(dffreq_a = as.data.frame(terra::freq(a_trans)))
+#(dffreq_b = as.data.frame(terra::freq(b_trans)))
+#dist_class = c(12, 42, 13, 15, 23, 25, 26, 43, 45)
 (sum(dffreq_a[dffreq_a$value %in% dist_class, ]$count))
 (sum(dffreq_b[dffreq_b$value %in% dist_class, ]$count))
 terra::freq(a_dist)
 terra::freq(b_dist)
+
+terra::crop()
