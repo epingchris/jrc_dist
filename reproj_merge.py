@@ -9,6 +9,7 @@ yr1 = 2021
 
 #%%
 # Create empty geopandas dataframe ----
+target_srs = 32622 # UTM zone 22N
 all_shp = gpd.GeoDataFrame(columns = ['geometry', 'DN', 'index', 'year'], geometry = 'geometry', crs = 'EPSG:' + str(target_srs))
 
 
@@ -21,7 +22,6 @@ for yr in range(yr0, yr1 + 1):
 
     #transform CRS
     source_srs = in_shp.crs.srs
-    target_srs = 32622 # UTM zone 22N
     if source_srs != 'EPSG:' + str(target_srs):
         in_shp = in_shp.to_crs(target_srs)
 
