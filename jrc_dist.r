@@ -25,10 +25,6 @@ rast_jrc1_gf = terra::crop(rast_jrc1, gf_contour)
 
 #create transition raster
 rast_trans = rast_jrc0_gf * 10 + rast_jrc1_gf
-#12, 42: new degradation
-#13, 15, 23, 25, 26, 43, 45: new deforestation
-#14, 24, 34, 51, 52, 54, 64: regrowth
-
 outpath_trans = paste0("/maps/epr26/jrc_dist/jrc_trans_", year1, ".tif")
 terra::writeRaster(rast_trans, filename = outpath_trans, overwrite = T)
 
@@ -40,9 +36,13 @@ if (check_freq) {
   print(as.vector(freqtab[freqtab$value == 32, ])[[3]])
 }
 
-#create raster identifying new disturbance pixels
-dist_class = c(12, 42, 13, 15, 23, 25, 26, 43, 45) # nolint: assignment_linter.
-rast_dist = terra::app(rast_trans, fun = function(x) ifelse(x %in% dist_class, 1, NA))
+#create transition raster layers identifying new degradation, deforestation, regrowth
+degrad_class = c(12, 42) #degradation
+defor_class = c(13, 15, 23, 25, 26, 43, 45) #defor
+regr_class = c(14, 24, 34, 51, 52, 54, 64) #regrowth
+rast_dist = terra::app(rast_trans, fun = function(x) ifelse(x %in% degrad_class, 1, 
+                                                            ifelse(x %in% defor_class, 2, 
+                                                                   ifelse(x %in% regr_class, -1, 0))))
 
 #save output
 outpath_dist = paste0("/maps/epr26/jrc_dist/jrc_dist_", year1, ".tif")
